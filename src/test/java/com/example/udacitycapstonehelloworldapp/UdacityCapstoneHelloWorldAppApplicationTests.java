@@ -8,6 +8,7 @@ class UdacityCapstoneHelloWorldAppApplicationTests {
 
     @Test
     void contextLoads() {
+        // intentionally left empty
     }
 
 }

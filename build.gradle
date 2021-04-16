@@ -2,6 +2,7 @@ plugins {
     id 'org.springframework.boot' version '2.4.5'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'java'
+    id "org.sonarqube" version "3.1.1"
 }
 
 group = 'com.example'
@@ -19,4 +20,12 @@ dependencies {
 
 test {
     useJUnitPlatform()
+}
+
+sonarqube {
+    properties {
+        property "sonar.projectKey", "udacity-capstone-hello-world-app"
+        property "sonar.organization", "shivakumarswamy"
+        property "sonar.host.url", "https://sonarcloud.io"
+    }
 }
