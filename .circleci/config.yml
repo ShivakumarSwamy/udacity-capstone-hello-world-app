@@ -1,5 +1,22 @@
 version: 2.1
 
+orbs:
+  slack: circleci/slack@4.3.1
+
+commands:
+
+  slack-notify-fail:
+    steps:
+      - slack/notify:
+          event: fail
+          template: basic_fail_1
+
+  slack-notify-pass:
+    steps:
+      - slack/notify:
+          event: pass
+          template: basic_success_1
+
 jobs:
   build:
     docker:
@@ -7,6 +24,7 @@ jobs:
     steps:
       - checkout
       - run: ./gradlew build test sonarqube
+      - slack-notify-fail
 
 workflows:
   app:
@@ -14,3 +32,4 @@ workflows:
       - build:
           context:
             - sonar-secrets
+            - slack-secrets
