@@ -6,20 +6,11 @@ jobs:
       - image: circleci/openjdk:11.0.8-jdk
     steps:
       - checkout
-      - run: ./gradlew test
-
-  lint:
-    docker:
-      - image: circleci/openjdk:11.0.8-jdk
-    steps:
-      - checkout
-      - run: ./gradlew sonarqube
+      - run: ./gradlew test sonarqube
 
 workflows:
   app:
     jobs:
-      - build
-      - lint:
-          requires: [build]
+      - build:
           context:
             - sonar-secrets
