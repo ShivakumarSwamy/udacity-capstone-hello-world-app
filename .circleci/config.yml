@@ -2,6 +2,7 @@ version: 2.1
 
 orbs:
   slack: circleci/slack@4.3.1
+  docker: circleci/docker@1.5.0
 
 commands:
 
@@ -18,7 +19,7 @@ commands:
           template: basic_success_1
 
 jobs:
-  build:
+  build-test-analyze:
     docker:
       - image: circleci/openjdk:11.0.8-jdk
     steps:
@@ -26,10 +27,39 @@ jobs:
       - run: ./gradlew build test sonarqube
       - slack-notify-fail
 
+  lint-dockerfile:
+    docker:
+      - image: circleci/node:13.8.0
+    steps:
+      - checkout
+      - docker/dockerlint:
+          treat-warnings-as-errors: true
+      - slack-notify-fail
+
+  build-push-image-dev:
+    docker:
+      - image: circleci/openjdk:11.0.8-jdk
+    steps:
+      - checkout
+      - run: ./gradlew jib
+      - slack-notify-fail
+
 workflows:
   app:
     jobs:
-      - build:
+      - build-test-analyze:
           context:
             - sonar-secrets
             - slack-secrets
+      - lint-dockerfile:
+          requires:
+            - build-test-analyze
+          context:
+            - slack-secrets
+      - build-push-image-dev:
+          context:
+            - docker-secrets
+            - slack-secrets
+          filters:
+            branches:
+              only: main
