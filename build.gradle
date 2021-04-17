@@ -47,12 +47,13 @@ bootJar {
     archiveFileName = "udacity-capstone-hello-world-app.jar"
 }
 
+
 jib {
     to {
         image = "shivakumarswamy/udacity-capstone-hello-world-app"
         auth {
-            username = System.getenv("DOCKER_LOGIN")
-            password = System.getenv("DOCKER_PASSWORD")
+            username = "$System.env.DOCKER_LOGIN"
+            password = "$System.env.DOCKER_PASSWORD"
         }
         tags = ["latest", version]
     }
