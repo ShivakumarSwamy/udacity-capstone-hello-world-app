@@ -1,7 +1,8 @@
 app:
   replicas: 1
   name: udacity-capstone-hello-world-app
-  image: shivakumarswamy/udacity-capstone-hello-world-app:latest
+  image: shivakumarswamy/udacity-capstone-hello-world-app
+  tag: latest
   port: 8080
   portName: http-web-app
   rollingUpdate:
