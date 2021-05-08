@@ -4,7 +4,6 @@ plugins {
     id 'java'
     id "org.sonarqube" version "3.1.1"
     id 'jacoco'
-    id 'com.google.cloud.tools.jib' version '3.0.0'
 }
 
 group = 'com.example'
@@ -46,16 +45,4 @@ test {
 
 bootJar {
     archiveFileName = "udacity-capstone-hello-world-app.jar"
-}
-
-
-jib {
-    to {
-        image = "shivakumarswamy/udacity-capstone-hello-world-app"
-        auth {
-            username = "$System.env.DOCKER_LOGIN"
-            password = "$System.env.DOCKER_PASSWORD"
-        }
-        tags = ["latest", version]
-    }
 }
