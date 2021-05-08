@@ -4,6 +4,8 @@ orbs:
   slack: circleci/slack@4.3.1
   docker: circleci/docker@1.5.0
   helm: circleci/helm@1.2.0
+  kubernetes: circleci/kubernetes@0.12.0
+  kubeval: kiddo3/kubevalorb@1.0.1
 
 executors:
   cimg-openjdk-11:
@@ -32,61 +34,99 @@ jobs:
       - checkout
       - run: ./gradlew build test sonarqube
       - slack-notify-fail
-#  lint-dockerfile:
-#    docker:
-#      - image: circleci/node:13.8.0
-#    steps:
-#      - checkout
-#      - docker/dockerlint:
-#          treat-warnings-as-errors: true
-#      - slack-notify-fail
 
-  build-push-image-dev:
+  k8s-manifest-validation-dryrun:
     docker:
-      - image: circleci/openjdk:11.0.8-jdk
+      - image: amazon/aws-cli:2.1.34
     steps:
-      - checkout
-      - run: ./gradlew jib
-      - slack-notify-fail
-
-  install-lint-dry-run-helm-v3:
-    docker:
-      - image: cimg/base:stable-20.04
-    steps:
+      - run: yum -y install jq tar git openssl wget
+      - run: aws eks update-kubeconfig --name shiva-1
       - checkout
       - helm/install-helm-client:
-          version: v3.0.0
-      - run: helm install --generate-name --dry-run ./micro-service
+          version: v3.5.3
+      - kubeval/install-kubeval
+      - run:
+          command: |
+            helm template . | kubeval
+          working_directory: micro-service
+      - kubernetes/install-kubectl
+      - run:
+          command: |
+            helm template . | kubectl apply -f - --dry-run=client --namespace shiva-1
+          working_directory: micro-service
+      - slack-notify-fail
+
+  k8s-deploy-app:
+    docker:
+      - image: amazon/aws-cli:2.1.34
+    steps:
+      - run: yum -y install jq tar git openssl
+      - run: aws eks update-kubeconfig --name shiva-1
+      - checkout
+      - helm/install-helm-client:
+          version: v3.5.3
+      - kubernetes/install-kubectl
+      - run:
+          command: |
+            helm template . | kubectl apply -f - --namespace shiva-1 --record
+          working_directory: micro-service
+      - run: kubectl rollout status deployment/udacity-capstone-hello-world-app --namespace=shiva-1 --watch=true
+      - run:
+          when: on_fail
+          command: |
+            kubectl rollout undo deployment/udacity-capstone-hello-world-app --namespace=shiva-1
+            kubectl rollout status deployment/udacity-capstone-hello-world-app --namespace=shiva-1 --watch=true
       - slack-notify-fail
 
 workflows:
   app:
     jobs:
-#      - build-test-analyze:
-#          context:
-#            - sonar-secrets
-#            - slack-secrets
-#      - docker/hadolint
-#      - install-lint-dry-run-helm-v3:
-#          context:
-#            - slack-secrets
-#          requires:
-#            - build-test-analyze
-#      - docker/publish:
-#          after_build:
-#            - slack-notify-fail
-#          after_checkout:
-#            - run: ./gradlew bootJar
-#          image: shivakumarswamy/udacity-capstone-hello-world-app
-#          executor: cimg-openjdk-11
-#          use-remote-docker: true
-#          context:
-#            - docker-secrets
-#            - slack-secrets
-
-#      - build-push-image-dev:
-#          requires:
-#            - build-test-analyze
-#          context:
-#            - docker-secrets
-#            - slack-secrets
+      - build-test-analyze:
+          context:
+            - sonar-secrets
+            - slack-secrets
+      - docker/hadolint:
+          requires:
+            - build-test-analyze
+          post-steps:
+            - slack-notify-fail
+          context:
+            - slack-secrets
+      - docker/publish:
+          requires:
+            - docker/hadolint
+          after_build:
+            - slack-notify-fail
+          after_checkout:
+            - run: ./gradlew bootJar
+          image: shivakumarswamy/udacity-capstone-hello-world-app
+          executor: cimg-openjdk-11
+          use-remote-docker: true
+          context:
+            - docker-secrets
+            - slack-secrets
+      - k8s-manifest-validation-dryrun:
+          requires:
+            - docker/publish
+          context:
+            - aws-secrets
+            - slack-secrets
+      - slack/on-hold:
+          requires:
+            - k8s-manifest-validation-dryrun
+          context:
+            - slack-secrets
+      - pause_workflow:
+          requires:
+            - k8s-manifest-validation-dryrun
+            - slack/on-hold
+          type: approval
+      - k8s-deploy-app:
+          filters:
+            branches:
+              only: main
+          requires:
+            - pause_workflow
+          context:
+            - aws-secrets
+            - slack-secrets
