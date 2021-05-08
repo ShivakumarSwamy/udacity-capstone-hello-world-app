@@ -13,7 +13,6 @@ executors:
       - image: cimg/openjdk:11.0
 
 commands:
-
   slack-notify-fail:
     steps:
       - slack/notify:
