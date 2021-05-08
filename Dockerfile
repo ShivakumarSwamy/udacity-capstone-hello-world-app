@@ -6,4 +6,4 @@ COPY . build/libs/udacity-capstone-hello-world-app.jar /app/
 
 EXPOSE 8080
 
-CMD ["java", "-jar", "/app/udacity-capstone-hello-world-app.jar"]
+ENTRYPOINT ["java", "-jar", "/app/udacity-capstone-hello-world-app.jar"]

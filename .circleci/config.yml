@@ -78,6 +78,7 @@ workflows:
           after_checkout:
             - run: ./gradlew build
           image: udacity-capstone-hello-world-app
+          executor: cimg/openjdk:11.0
           context:
             - docker-secrets
             - slack-secrets
