@@ -117,7 +117,6 @@ workflows:
             - slack-secrets
       - pause_workflow:
           requires:
-            - k8s-manifest-validation-dryrun
             - slack/on-hold
           type: approval
       - k8s-deploy-app:
