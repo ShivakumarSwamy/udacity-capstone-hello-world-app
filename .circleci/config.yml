@@ -82,9 +82,9 @@ workflows:
             - slack-notify-fail
           after_checkout:
             - run: ./gradlew build
-            - setup_remote_docker
-          image: udacity-capstone-hello-world-app
+          image: shivakumarswamy/udacity-capstone-hello-world-app
           executor: cimg-openjdk-11
+          use-remote-docker: true
           context:
             - docker-secrets
             - slack-secrets
