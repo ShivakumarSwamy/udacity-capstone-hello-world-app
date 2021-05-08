@@ -81,7 +81,7 @@ workflows:
           after_build:
             - slack-notify-fail
           after_checkout:
-            - run: ./gradlew build
+            - run: ./gradlew bootJar
           image: shivakumarswamy/udacity-capstone-hello-world-app
           executor: cimg-openjdk-11
           use-remote-docker: true
