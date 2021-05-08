@@ -1,0 +1,14 @@
+.circleci/
+.gradle/
+.idea/
+gradle/
+micro-service/
+src/
+.git/
+.gitignore
+*sh
+*.gradle
+*.md
+*.iml
+gradlew
+gradlew.bat

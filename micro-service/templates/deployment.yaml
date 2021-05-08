@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.app.name }}
+spec:
+  replicas: {{ .Values.app.replicas }}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: {{ .Values.app.rollingUpdate.maxUnavailable }}
+  selector:
+    matchLabels:
+      app: {{ .Values.app.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.app.name }}
+    spec:
+      containers:
+        - name: {{ .Values.app.name }}
+          image: {{ .Values.app.image }}
+          imagePullPolicy: Always
+          ports:
+            - containerPort: {{ .Values.app.port }}
+              name: {{ .Values.app.portName }}
+          livenessProbe:
+            initialDelaySeconds: {{ .Values.app.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.app.livenessProbe.periodSeconds }}
+            httpGet:
+              path: {{ .Values.app.livenessProbe.httpGet.path }}
+              port: {{ .Values.app.livenessProbe.httpGet.port }}
+          readinessProbe:
+            initialDelaySeconds: {{ .Values.app.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.app.readinessProbe.periodSeconds }}
+            httpGet:
+              path: {{ .Values.app.readinessProbe.httpGet.path }}
+              port: {{ .Values.app.readinessProbe.httpGet.port }}

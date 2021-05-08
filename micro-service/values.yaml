@@ -1,0 +1,25 @@
+app:
+  replicas: 1
+  name: udacity-capstone-hello-world-app
+  image: shivakumarswamy/udacity-capstone-hello-world-app:latest
+  port: 8080
+  portName: http-web-app
+  rollingUpdate:
+    maxUnavailable: 30%
+  livenessProbe:
+    initialDelaySeconds: 10
+    periodSeconds: 5
+    httpGet:
+      path: /actuator/health/liveness
+      port: 8080
+  readinessProbe:
+    initialDelaySeconds: 10
+    periodSeconds: 5
+    httpGet:
+      path: /actuator/health/readiness
+      port: 8080
+
+service:
+  port:
+    value: 80
+    name: http-service

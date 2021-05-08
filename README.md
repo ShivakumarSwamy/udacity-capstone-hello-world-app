@@ -7,6 +7,7 @@
 - [App Pre-requisites](#app-pre-requisites)
 - [Run app locally ](#run-app-locally)
 
+
 ## App Pre-requisites
 
 - Java 11
@@ -18,3 +19,7 @@ Execute the below gradle command to run app locally at port 8080
 ```bash
 ./gradlew bootRun
 ```
+
+## Environment Variables Used
+
+- SONAR_TOKEN: used for sonarqube
