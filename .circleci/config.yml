@@ -31,6 +31,7 @@ commands:
           when: on_fail
           name: Rollback deployment ${DEPLOYMENT_NAME} in namespace ${NAMESPACE}
           command: |
+            env
             kubectl rollout undo deployment/${DEPLOYMENT_NAME} --namespace=${NAMESPACE}
             kubectl rollout status deployment/${DEPLOYMENT_NAME} --namespace=${NAMESPACE} --watch=true
 
@@ -100,9 +101,9 @@ jobs:
           name: backend health check
           command: |
             export HOSTNAME="$(kubectl get -n ${NAMESPACE} ingress ${INGRESS_NAME} -o json | jq -r ".status.loadBalancer.ingress[0].hostname")"
-            curl --silent --fail http://${HOSTNAME}/actuator/health
+            curl --silent --fail http://${HOSTNAME}/actuator/healt
             env
-#      - k8s-rollback-deployment-on-fail
+      - k8s-rollback-deployment-on-fail
       - slack-notify-on-fail
       - slack-notify-on-pass
 
