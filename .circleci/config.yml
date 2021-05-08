@@ -67,27 +67,22 @@ workflows:
 #            - sonar-secrets
 #            - slack-secrets
 #      - docker/hadolint
-#      - lint-dockerfile:
-#          requires:
-#            - build-test-analyze
-#          context:
-#            - slack-secrets
 #      - install-lint-dry-run-helm-v3:
 #          context:
 #            - slack-secrets
 #          requires:
 #            - build-test-analyze
-      - docker/publish:
-          after_build:
-            - slack-notify-fail
-          after_checkout:
-            - run: ./gradlew bootJar
-          image: shivakumarswamy/udacity-capstone-hello-world-app
-          executor: cimg-openjdk-11
-          use-remote-docker: true
-          context:
-            - docker-secrets
-            - slack-secrets
+#      - docker/publish:
+#          after_build:
+#            - slack-notify-fail
+#          after_checkout:
+#            - run: ./gradlew bootJar
+#          image: shivakumarswamy/udacity-capstone-hello-world-app
+#          executor: cimg-openjdk-11
+#          use-remote-docker: true
+#          context:
+#            - docker-secrets
+#            - slack-secrets
 
 #      - build-push-image-dev:
 #          requires:
