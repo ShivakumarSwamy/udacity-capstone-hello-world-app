@@ -5,6 +5,11 @@ orbs:
   docker: circleci/docker@1.5.0
   helm: circleci/helm@1.2.0
 
+executors:
+  cimg-openjdk-11:
+    docker:
+      - image: cimg/openjdk:11.0
+
 commands:
 
   slack-notify-fail:
@@ -78,7 +83,7 @@ workflows:
           after_checkout:
             - run: ./gradlew build
           image: udacity-capstone-hello-world-app
-          executor: cimg/openjdk:11.0
+          executor: cimg-openjdk-11
           context:
             - docker-secrets
             - slack-secrets
