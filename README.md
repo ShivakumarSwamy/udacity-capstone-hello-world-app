@@ -18,3 +18,9 @@ Execute the below gradle command to run app locally at port 8080
 ```shell
 ./gradlew bootRun
 ```
+
+The app is available under the url with an endpoint `hello` deployed in k8s
+
+```text
+http://k8s-udacitys-udacityc-6906a8db33-1677773899.us-east-1.elb.amazonaws.com/hello
+```
