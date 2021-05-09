@@ -80,8 +80,8 @@ jobs:
           working_directory: micro-service
       - slack-notify-on-fail
     environment:
-      CLUSTER_NAME: shiva-1
-      NAMESPACE: shiva-1
+      CLUSTER_NAME: udacity-1
+      NAMESPACE: udacity-services
 
   k8s-deploy-app:
     docker:
@@ -104,8 +104,8 @@ jobs:
           namespace: "${NAMESPACE}"
       - slack-notify-on-fail
     environment:
-      CLUSTER_NAME: shiva-1
-      NAMESPACE: shiva-1
+      CLUSTER_NAME: udacity-1
+      NAMESPACE: udacity-services
       DEPLOYMENT_NAME: udacity-capstone-hello-world-app
 
   smoke-test:
@@ -127,8 +127,8 @@ jobs:
       - slack-notify-on-fail
       - slack-notify-on-pass
     environment:
-      CLUSTER_NAME: shiva-1
-      NAMESPACE: shiva-1
+      CLUSTER_NAME: udacity-1
+      NAMESPACE: udacity-services
       INGRESS_NAME: udacity-capstone-hello-world-app
       DEPLOYMENT_NAME: udacity-capstone-hello-world-app
 
