@@ -1,5 +1,5 @@
 app:
-  replicas: 1
+  replicas: 2
   name: udacity-capstone-hello-world-app
   image: shivakumarswamy/udacity-capstone-hello-world-app
   tag: latest
